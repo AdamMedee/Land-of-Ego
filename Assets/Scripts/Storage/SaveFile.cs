@@ -7,12 +7,13 @@ public class SaveFile : MonoBehaviour
 {
     // Start is called before the first frame update
     //Save ID, Player name, Currency, Position, Reputation, Stats, Card deck, Equipment
-
-
+    private int defaultX = 0;
+    private int defaultY = 0;
+    private string defaultName = "Bob";
     public void LoadFile(int id)
     {
         
-        if (PlayerPrefs.GetInt("File" + id + " Empty") == 1)
+        if (!PlayerPrefs.HasKey("File" + id + " Empty") || PlayerPrefs.GetInt("File" + id + " Empty") == 1)
         {
             NewFile(id);
         }
@@ -25,14 +26,17 @@ public class SaveFile : MonoBehaviour
         }
     }
 
-    public void DeleteFile()
+    public void DeleteFile(int id)
     {
-        
+        PlayerPrefs.SetInt("File" + id + " Empty", 1);
     }
 
     public void NewFile(int id)
     {
-        
+        PlayerPrefs.SetInt("File" + id + " Empty", 0);
+        PlayerPrefs.SetInt("File" + id + " MapX", defaultX);
+        PlayerPrefs.SetInt("File" + id + " MapY", defaultY);
+        PlayerPrefs.SetString("File" + id + " Name", defaultName);
     }
 
     public void SaveData()
