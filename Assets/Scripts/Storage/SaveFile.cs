@@ -21,7 +21,6 @@ public class SaveFile : MonoBehaviour
         {
             int x = PlayerPrefs.GetInt("File" + id + " MapX");
             int y = PlayerPrefs.GetInt("File" + id + " MapY");
-            PlayerPrefs.Save();
             SceneManager.LoadScene("Map - " + x + " - " + y);
         }
     }
@@ -29,6 +28,7 @@ public class SaveFile : MonoBehaviour
     public void DeleteFile(int id)
     {
         PlayerPrefs.SetInt("File" + id + " Empty", 1);
+        PlayerPrefs.Save();
     }
 
     public void NewFile(int id)
@@ -37,6 +37,7 @@ public class SaveFile : MonoBehaviour
         PlayerPrefs.SetInt("File" + id + " MapX", defaultX);
         PlayerPrefs.SetInt("File" + id + " MapY", defaultY);
         PlayerPrefs.SetString("File" + id + " Name", defaultName);
+        PlayerPrefs.Save();
     }
 
     public void SaveData()
