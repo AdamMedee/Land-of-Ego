@@ -1,18 +1,55 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Projectile : MonoBehaviour
+public abstract class Projectile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Rigidbody2D rb;
+    public BoxCollider2D bc;
+
+    public void Start()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Update()
     {
-        
+        if (transform.position.x < -1000 || transform.position.x > 1000 || transform.position.y < -1000 ||
+            transform.position.y > 1000)
+        {
+            Destroy(gameObject);
+        }
+
+    }
+    
+    public void init()
+    {
+        rb = gameObject.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 0;
+        rb.isKinematic = true;
+        bc = gameObject.AddComponent<BoxCollider2D>();
+    }
+
+    public abstract void CreateProjectile(Vector2 charPos, Vector2 target);
+}
+
+
+public class Arrow : Projectile
+{
+    public void Start()
+    {
+        base.Start();
+        gameObject.AddComponent<Image>();
+    }
+
+    public override void CreateProjectile(Vector2 charPos, Vector2 target)
+    {
+        init();
+        Vector2 direction = (target - charPos).normalized;
+        rb.velocity = direction * 400;
     }
 }

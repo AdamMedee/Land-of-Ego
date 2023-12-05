@@ -46,7 +46,20 @@ public class Character : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 TargetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                // Get the direction to the target
+                Vector2 direction = TargetPoint - new Vector2(transform.position.x, transform.position.y);
+
+                // Calculate the rotation angle in degrees
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 90;
+
+                // Apply the rotation to the GameObject
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 moving = true;
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                //Card c = new ShootArrow();
+                //c.UseCard(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));;
             }
         }
     }
