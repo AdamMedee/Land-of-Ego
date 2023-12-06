@@ -11,10 +11,7 @@ public abstract class Projectile : MonoBehaviour
     public Rigidbody2D rb;
     public BoxCollider2D bc;
 
-    public void Start()
-    {
 
-    }
 
     public void Update()
     {
@@ -42,7 +39,6 @@ public class Arrow : Projectile
 {
     public void Start()
     {
-        base.Start();
         gameObject.AddComponent<Image>();
     }
 

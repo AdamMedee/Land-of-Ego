@@ -17,4 +17,8 @@ public class SamNPC : NPC
         
     }
     
+    public override void PromptAnswer(int answer)
+    {
+
+    }
 }

@@ -11,6 +11,8 @@ public class Character : MonoBehaviour
     private Rigidbody2D rb;
     private int speed;
     private GameObject PauseMenu;
+    private GameObject model;
+    private Animator animator;
     public bool paused;
     
     // Start is called before the first frame update
@@ -20,6 +22,8 @@ public class Character : MonoBehaviour
         speed = 140;
         PauseMenu = GameObject.Find("MainCanvas").transform.Find("PauseMenu").gameObject;
         paused = false;
+        model = transform.Find("Model").gameObject;
+        animator = model.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -28,7 +32,6 @@ public class Character : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             PauseMenu.SetActive(!PauseMenu.activeSelf);
-
         }
         if (PauseMenu.activeSelf)
         {
@@ -61,6 +64,8 @@ public class Character : MonoBehaviour
                 //Card c = new ShootArrow();
                 //c.UseCard(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));;
             }
+
+            animator.SetBool("IsIdle", !moving);
         }
     }
 

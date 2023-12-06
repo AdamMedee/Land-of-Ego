@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,7 @@ public class BobbyNPC : NPC
                 if (reputation > 40)
                 {
                     DoDialogue("Howdy!");
+                    StartCoroutine(DelayedPrompt("abg", "dasd", "www"));
                 }
                 else
                 {
@@ -34,6 +36,7 @@ public class BobbyNPC : NPC
             
             case 1:
                 DoDialogue("If you wanna do the quest let me know!");
+                //PromptDialogue();
                 break;
             
             case 2:
@@ -54,5 +57,59 @@ public class BobbyNPC : NPC
 
     }
 
+    public override void PromptAnswer(int answer)
+    {
+        switch (state)
+        {
+            case 0:
+                if (reputation > 40)
+                {
+                    if (answer == 1)
+                    {
+                        reputation = Math.Min(reputation + 10, 100);
+                        state = 1;
+                    }
+                    else if (answer == 2)
+                    {
+                        reputation = Math.Max(reputation - 10, 100);
+                        state = 1;
+                    }
+                    else
+                    {
+                        state = 2;
+                        //Code to add quest to quest list
+                    }
+                }
+                else
+                {
 
+                }
+                break;
+            
+            case 1:
+                break;
+            
+            case 2:
+                break;
+            
+            case 3:
+                break;
+            
+            case 4:
+                break;
+            
+            case 5:
+                break;
+            
+            default:
+                return;
+        }
+        DetermineDialogue();
+    }
+
+    IEnumerator DelayedPrompt(string m1, string m2, string m3)
+    {
+        yield return new WaitForSeconds(3f);
+        PromptDialogue(m1, m2, m3);
+    }
 }
