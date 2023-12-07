@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Character : MonoBehaviour
 {
@@ -13,8 +14,14 @@ public class Character : MonoBehaviour
     private GameObject PauseMenu;
     private GameObject model;
     private Animator animator;
+    private GameObject healthBar;
     public bool paused;
     public bool myTurn;
+
+    private int health;
+    private int maxHealth;
+    private int mana;
+    private int maxMana;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +32,7 @@ public class Character : MonoBehaviour
         model = transform.Find("Model").gameObject;
         animator = model.GetComponent<Animator>();
         myTurn = false;
+        healthBar = GameObject.Find("GUI").transform.Find("HealthBar").transform.Find("Bar").gameObject;
     }
 
     // Update is called once per frame
@@ -62,8 +70,8 @@ public class Character : MonoBehaviour
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                //Card c = new ShootArrow();
-                //c.UseCard(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));;
+                Card c = new ShootArrow();
+                c.UseCard(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 0);;
             }
 
             animator.SetBool("IsIdle", !moving);
@@ -87,6 +95,23 @@ public class Character : MonoBehaviour
                 rb.velocity = speed * moveDirection;
             }
         }
+    }
+
+
+    public void ChangeHealth(int delta)
+    {
+        health = Math.Min(maxHealth, health + delta);
+        if (health <= 0)
+        {
+            KillSelf();
+        }
+        healthBar.SetActive(health!=maxHealth);
+        healthBar.GetComponent<Slider>().value = (float)health / maxHealth;
+    }
+
+    public void KillSelf()
+    {
+        print("deadge2");
     }
     
     

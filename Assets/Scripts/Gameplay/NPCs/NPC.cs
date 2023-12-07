@@ -172,8 +172,6 @@ public abstract class NPC : MonoBehaviour
         print("deadge");
         Destroy(gameObject);
     }
-    
-    
 }
 
 // Implement specific NPC types
