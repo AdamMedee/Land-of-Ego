@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +16,14 @@ public abstract class NPC : MonoBehaviour
     protected static GameObject dialogueBoxTemplate;
     protected static GameObject dialoguePromptTemplate;
     private bool targetted = false;
+    protected int health;
+    protected int maxHealth;
+    protected int mana;
+    protected int maxMana;
+    protected GameObject healthBar;
+    protected List<Card> cards;
+
+    public bool myTurn;
     // An abstract "state" idea, lets say you've never spoken to someone, state would be 0, you talk to them it becomes 1, you
     //do a quest it becomes 2. It helps in determining the dialogue tree
 
@@ -28,6 +38,8 @@ public abstract class NPC : MonoBehaviour
         {
             dialoguePromptTemplate = GameObject.Find("DialoguePrompts").transform.Find("DialoguePromptTemplate").gameObject;
         }
+        healthBar = transform.Find("HealthBar").gameObject;
+        myTurn = false;
         Init();
     }
 
@@ -70,7 +82,7 @@ public abstract class NPC : MonoBehaviour
             TextMeshProUGUI text = messageObject.GetComponent<TextMeshProUGUI>();
             text.text = message;
             duplicatedObject.SetActive(true);
-            duplicatedObject.transform.position = new Vector3(0f, -320f, 0f);
+            //duplicatedObject.transform.position = new Vector3(0f, -320f, 0f);
             Invoke("DeleteDialogue", 3f);
         }
 
@@ -127,6 +139,40 @@ public abstract class NPC : MonoBehaviour
 
     public abstract void PromptAnswer(int answer);
 
+    public void DoCombat()
+    {
+        print("attack!!");
+        print(cards[0]);
+    }
+    
+    IEnumerator DelayedCombat()
+    {
+        yield return new WaitForSeconds(3f);
+        DoCombat();
+    }
+
+    public void ChangeHealth(int delta)
+    {
+        health = Math.Min(maxHealth, health + delta);
+        if (health <= 0)
+        {
+            KillSelf();
+        }
+        healthBar.SetActive(health!=maxHealth);
+        healthBar.GetComponent<Slider>().value = (float)health / maxHealth;
+    }
+
+    public void StartCombat()
+    {
+        CombatManager.Instance.StartCombat();
+    }
+
+    public void KillSelf()
+    {
+        print("deadge");
+        Destroy(gameObject);
+    }
+    
     
 }
 

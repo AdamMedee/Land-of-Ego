@@ -14,7 +14,7 @@ public class Character : MonoBehaviour
     private GameObject model;
     private Animator animator;
     public bool paused;
-    
+    public bool myTurn;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +24,7 @@ public class Character : MonoBehaviour
         paused = false;
         model = transform.Find("Model").gameObject;
         animator = model.GetComponent<Animator>();
+        myTurn = false;
     }
 
     // Update is called once per frame
@@ -87,6 +88,8 @@ public class Character : MonoBehaviour
             }
         }
     }
+    
+    
     
     
 }

@@ -14,6 +14,19 @@ public class BobbyNPC : NPC
     public override void Init()
     {
         race = "Elf";
+        cards = new List<Card>()
+        {
+            new ShootArrow(),
+            new ShootArrow(),
+            new ShootArrow(),
+            new ShootArrow(),
+            new ShootArrow(),
+            new ShootArrow()
+        };
+        maxHealth = 40;
+        health = maxHealth;
+        maxMana = 2;
+        mana = maxMana;
         Debug.Log("Bobby NPC initialized.");
     }
 
@@ -73,6 +86,7 @@ public class BobbyNPC : NPC
                     {
                         reputation = Math.Max(reputation - 10, 100);
                         state = 1;
+                        StartCombat();
                     }
                     else
                     {
