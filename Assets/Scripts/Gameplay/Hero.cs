@@ -59,7 +59,7 @@ public class Character : MonoBehaviour
             {
                 TargetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 // Get the direction to the target
-                Vector2 direction = TargetPoint - new Vector2(transform.position.x, transform.position.y);
+                Vector2 direction =  new Vector2(transform.position.x, transform.position.y) - TargetPoint;
 
                 // Calculate the rotation angle in degrees
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 90;
