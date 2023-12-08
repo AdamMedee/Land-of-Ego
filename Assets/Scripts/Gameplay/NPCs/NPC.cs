@@ -22,14 +22,22 @@ public abstract class NPC : MonoBehaviour
     protected int maxMana;
     protected GameObject healthBar;
     protected List<Card> cards;
-
+    protected CombatManager combatManager;
+    public bool alive;
+    public int rooted;
+    protected Character cha;
     public bool myTurn;
     // An abstract "state" idea, lets say you've never spoken to someone, state would be 0, you talk to them it becomes 1, you
     //do a quest it becomes 2. It helps in determining the dialogue tree
 
     void Start()
     {
+        myTurn = false;
+        alive = false;
+        rooted = 0;
+        Init();
         hero = GameObject.Find("Hero");
+        cha = hero.GetComponent<Character>();
         if (!dialogueBoxTemplate)
         {
             dialogueBoxTemplate = GameObject.Find("DialogueBoxes").transform.Find("DialogueBoxTemplate").gameObject;
@@ -39,8 +47,8 @@ public abstract class NPC : MonoBehaviour
             dialoguePromptTemplate = GameObject.Find("DialoguePrompts").transform.Find("DialoguePromptTemplate").gameObject;
         }
         healthBar = transform.Find("HealthBar").gameObject;
-        myTurn = false;
-        Init();
+        combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>();
+        ChangeHealth(0);
     }
 
     void Update()
@@ -63,17 +71,30 @@ public abstract class NPC : MonoBehaviour
         {
             if ((hero.transform.position - transform.position).magnitude < 100)
             {
+                Character cha = hero.GetComponent<Character>();
+                cha.inDialogue = true;
                 DetermineDialogue();
                 targetted = false;
             }
         }
+
+        
+        if (myTurn)
+        {
+            myTurn = false;
+            StartCoroutine(DelayedCombat());
+            
+        }
         
     }
+
+
 
     public abstract void DetermineDialogue();
 
     public void DoDialogue(string message)
     {
+        cha.inDialogue = true;
         Transform parentTransform = GameObject.Find("DialogueBoxes").transform;
         if (parentTransform.childCount < 2)
         {
@@ -83,14 +104,15 @@ public abstract class NPC : MonoBehaviour
             text.text = message;
             duplicatedObject.SetActive(true);
             //duplicatedObject.transform.position = new Vector3(0f, -320f, 0f);
-            Invoke("DeleteDialogue", 3f);
+            Invoke("DeleteDialogue", 2f);
         }
-
     }
 
     public void DeleteDialogue()
     {
         GameObject dialogue = GameObject.Find("DialogueBoxes").transform.GetChild(1).gameObject;
+        Character cha = hero.GetComponent<Character>();
+        cha.inDialogue = false;
         Destroy(dialogue);
     }
 
@@ -99,7 +121,8 @@ public abstract class NPC : MonoBehaviour
     {
         //type -1 -> nothing, 0 -> message, 1 -> quest, 2 -> combat, 3 -> shop
         // Check if the dialogue prompt prefab is assigned
-        
+        Character cha = hero.GetComponent<Character>();
+        cha.inDialogue = true;
         Transform parentTransform = GameObject.Find("DialoguePrompts").transform;
         GameObject dialoguePromptObject = Instantiate(dialoguePromptTemplate, parentTransform);
 
@@ -132,6 +155,10 @@ public abstract class NPC : MonoBehaviour
         button2.onClick.AddListener(() => Destroy(dialoguePromptObject));
         button3.onClick.AddListener(() => Destroy(dialoguePromptObject));
 
+        button1.onClick.AddListener(() => PromptAnswered());
+        button2.onClick.AddListener(() => PromptAnswered());
+        button3.onClick.AddListener(() => PromptAnswered());
+        
         dialoguePromptObject.SetActive(true);
     }
 
@@ -139,16 +166,24 @@ public abstract class NPC : MonoBehaviour
 
     public abstract void PromptAnswer(int answer);
 
+    public void PromptAnswered()
+    {
+        Character cha = hero.GetComponent<Character>();
+        cha.inDialogue = false;
+    }
+
     public void DoCombat()
     {
         print("attack!!");
-        print(cards[0]);
+        cards[0].UseCard(transform.position, hero.transform.position, 1);
+
     }
     
     IEnumerator DelayedCombat()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
         DoCombat();
+        combatManager.ChangeTurn();
     }
 
     public void ChangeHealth(int delta)
@@ -169,7 +204,7 @@ public abstract class NPC : MonoBehaviour
 
     public void KillSelf()
     {
-        print("deadge");
+        alive = false;
         Destroy(gameObject);
     }
 }

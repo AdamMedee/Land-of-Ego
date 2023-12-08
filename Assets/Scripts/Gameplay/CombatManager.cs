@@ -13,13 +13,16 @@ public class CombatManager : MonoBehaviour
     public List<string> initiativeOrder;
 
     public int current;
-    
+
+    private GameObject NPCs;
+    private Character hero;
     public static CombatManager Instance { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
         fighting = false;
-
+        NPCs = GameObject.Find("NPCs");
+        hero = GameObject.Find("Hero").GetComponent<Character>();
         Instance = this;
     }
     
@@ -29,6 +32,95 @@ public class CombatManager : MonoBehaviour
         {
             // Get script of current fighter
             // 
+            
+        }
+    }
+
+    public void ChangeTurn()
+    {
+        if (!hero.alive)
+        {
+            EndCombat();
+            return;
+        }
+        
+        if (NPCs.transform.childCount == 0)
+        {
+            EndCombat();
+            return;
+        }
+        
+        NPC npc;
+        GameObject n;
+        if (initiativeOrder[current].Equals("Hero"))
+        {
+            if (!hero.myTurn)
+            {
+                current += 1;
+                if (current == initiativeOrder.Count)
+                {
+                    current = 0;
+                    ProcAreas();
+                }
+                
+                if (initiativeOrder[current].Equals("Hero"))
+                {
+                    hero.myTurn = true;
+                }
+                else
+                {
+                    n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
+                    if (n == null)
+                    {
+                        ChangeTurn();
+                        return;
+                    }
+                    npc = n.GetComponent<NPC>();
+                    npc.myTurn = true;
+                }
+            }
+        }
+        else
+        {
+            n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
+            npc = n.GetComponent<NPC>();
+            
+            if (!npc.myTurn)
+            {
+                current += 1;
+                if (current == initiativeOrder.Count)
+                {
+                    current = 0;
+                    ProcAreas();
+                }
+
+                if (initiativeOrder[current].Equals("Hero"))
+                {
+                    hero.myTurn = true;
+                }
+                else
+                {
+                    n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
+                    if (n == null)
+                    {
+                        ChangeTurn();
+                        return;
+                    }
+                    npc = n.GetComponent<NPC>();
+                    npc.myTurn = true;
+                }
+            }
+        }
+    }
+
+    public void ProcAreas()
+    {
+        GameObject areas = GameObject.Find("AreasOfEffect");
+        foreach(Transform child in areas.transform)
+        {
+            AreaOfEffect aoe = child.GetComponent<AreaOfEffect>();
+            aoe.ProcArea();
+            aoe.lifespan -= 1;
         }
     }
 
@@ -36,8 +128,9 @@ public class CombatManager : MonoBehaviour
     {
         if (!fighting)
         {
+            hero.fighting = true;
+            
             initiativeOrder.Add("Hero");
-            GameObject NPCs = GameObject.Find("NPCs");
             foreach (Transform child in NPCs.transform)
             {
                 initiativeOrder.Add(child.name);
@@ -49,9 +142,18 @@ public class CombatManager : MonoBehaviour
             }
             
             current = 0;
-            
+
+            if (initiativeOrder[current].Equals("Hero"))
+            {
+                hero.myTurn = true;
+            }
+            else
+            {
+                NPC npc = NPCs.transform.Find(initiativeOrder[current]).gameObject.GetComponent<NPC>();
+                npc.myTurn = true;
+            }
+
             fighting = true;
-            
         }
     }
     
@@ -67,6 +169,12 @@ public class CombatManager : MonoBehaviour
             list[k] = list[n];
             list[n] = value;
         }
+    }
+
+    public void EndCombat()
+    {
+        hero.myTurn = false;
+        hero.fighting = false;
     }
 
 
