@@ -71,10 +71,13 @@ public abstract class NPC : MonoBehaviour
         {
             if ((hero.transform.position - transform.position).magnitude < 100)
             {
-                Character cha = hero.GetComponent<Character>();
-                cha.inDialogue = true;
-                DetermineDialogue();
-                targetted = false;
+                if (!combatManager.fighting)
+                {
+                    Character cha = hero.GetComponent<Character>();
+                    cha.inDialogue = true;
+                    DetermineDialogue();
+                    targetted = false;
+                }
             }
         }
 

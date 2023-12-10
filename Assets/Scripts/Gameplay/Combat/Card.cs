@@ -308,7 +308,7 @@ public class SwordSlash : Card {
                 if (Vector2.SqrMagnitude(child.position - hero.transform.position) < 10000)
                 {
                     System.Random random = new System.Random();
-                    int damage = random.Next(2, 5 + 1) * -1;
+                    int damage = random.Next(12, 15 + 1) * -1;
                     child.gameObject.GetComponent<NPC>().ChangeHealth(damage);
                 }
             }

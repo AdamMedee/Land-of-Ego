@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CombatManager : MonoBehaviour
@@ -38,6 +39,10 @@ public class CombatManager : MonoBehaviour
 
     public void ChangeTurn()
     {
+        print(current);
+        print(initiativeOrder);
+        
+        // Check if fight was won or lost
         if (!hero.alive)
         {
             EndCombat();
@@ -47,15 +52,25 @@ public class CombatManager : MonoBehaviour
         if (NPCs.transform.childCount == 0)
         {
             EndCombat();
+            hero.maxMana = 2;
+            hero.mana = 2;
+            hero.UpdateManaBar();
             return;
         }
         
         NPC npc;
         GameObject n;
+        
+        
+        // Check if it's the players turn
         if (initiativeOrder[current].Equals("Hero"))
         {
+            
+            // Check if player has used their turn
             if (!hero.myTurn)
             {
+                
+                // Go to next turn
                 current += 1;
                 if (current == initiativeOrder.Count)
                 {
@@ -63,18 +78,25 @@ public class CombatManager : MonoBehaviour
                     ProcAreas();
                 }
                 
+                // If next turn is hero, then set var
                 if (initiativeOrder[current].Equals("Hero"))
                 {
                     hero.myTurn = true;
                 }
                 else
                 {
-                    n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
-                    if (n == null)
+                    //Otherwise next turn is npc
+                    Transform t = NPCs.transform.Find(initiativeOrder[current]);
+                    
+                    
+                    //If npc is null, 
+                    if (t == null)
                     {
                         ChangeTurn();
                         return;
                     }
+
+                    n = t.gameObject;
                     npc = n.GetComponent<NPC>();
                     npc.myTurn = true;
                 }
@@ -82,7 +104,42 @@ public class CombatManager : MonoBehaviour
         }
         else
         {
-            n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
+            // Means that it's an NPC's turn
+            Transform t = NPCs.transform.Find(initiativeOrder[current]);
+                    
+            
+            // If NPC is dead, go next turn
+            if (t == null)
+            {
+                current += 1;
+                if (current == initiativeOrder.Count)
+                {
+                    current = 0;
+                    ProcAreas();
+                }
+                if (initiativeOrder[current].Equals("Hero"))
+                {
+                    hero.myTurn = true;
+                }
+                else
+                {
+                    t = NPCs.transform.Find(initiativeOrder[current]);
+                    
+                    if (t == null)
+                    {
+                        ChangeTurn();
+                        return;
+                    }
+
+                    n = t.gameObject;
+                    npc = n.GetComponent<NPC>();
+                    npc.myTurn = true;
+                }
+                ChangeTurn();
+                return;
+            }
+
+            n = t.gameObject;
             npc = n.GetComponent<NPC>();
             
             if (!npc.myTurn)
@@ -100,12 +157,15 @@ public class CombatManager : MonoBehaviour
                 }
                 else
                 {
-                    n = NPCs.transform.Find(initiativeOrder[current]).gameObject;
-                    if (n == null)
+                    t = NPCs.transform.Find(initiativeOrder[current]);
+                    
+                    if (t == null)
                     {
                         ChangeTurn();
                         return;
                     }
+
+                    n = t.gameObject;
                     npc = n.GetComponent<NPC>();
                     npc.myTurn = true;
                 }
