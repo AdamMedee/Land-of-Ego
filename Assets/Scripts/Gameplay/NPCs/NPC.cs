@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.UI;
 
 
@@ -23,17 +24,17 @@ public abstract class NPC : MonoBehaviour
     protected GameObject healthBar;
     protected List<Card> cards;
     protected CombatManager combatManager;
-    public bool alive;
     public int rooted;
     protected Character cha;
     public bool myTurn;
+
+    private SoundEffectsManager sfxManager;
     // An abstract "state" idea, lets say you've never spoken to someone, state would be 0, you talk to them it becomes 1, you
     //do a quest it becomes 2. It helps in determining the dialogue tree
 
     void Start()
     {
         myTurn = false;
-        alive = false;
         rooted = 0;
         Init();
         hero = GameObject.Find("Hero");
@@ -53,33 +54,37 @@ public abstract class NPC : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!combatManager.fighting)
         {
-            Vector2 TargetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            
-            if ((TargetPoint - new Vector2(transform.position.x, transform.position.y)).magnitude < 100)
+            if (Input.GetMouseButtonDown(0))
             {
-                targetted = true;
-            }
-            else
-            {
-                targetted = false;
-            }
-        }
-
-        if (targetted)
-        {
-            if ((hero.transform.position - transform.position).magnitude < 100)
-            {
-                if (!combatManager.fighting)
+                Vector2 TargetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                
+                if ((TargetPoint - new Vector2(transform.position.x, transform.position.y)).magnitude < 100)
                 {
-                    Character cha = hero.GetComponent<Character>();
-                    cha.inDialogue = true;
-                    DetermineDialogue();
+                    targetted = true;
+                }
+                else
+                {
                     targetted = false;
                 }
             }
+
+            if (targetted)
+            {
+                if ((hero.transform.position - transform.position).magnitude < 100)
+                {
+                    if (!combatManager.fighting)
+                    {
+                        Character cha = hero.GetComponent<Character>();
+                        cha.inDialogue = true;
+                        DetermineDialogue();
+                        targetted = false;
+                    }
+                }
+            }
         }
+
 
         
         if (myTurn)
@@ -178,7 +183,18 @@ public abstract class NPC : MonoBehaviour
     public void DoCombat()
     {
         print("attack!!");
-        cards[0].UseCard(transform.position, hero.transform.position, 1);
+        System.Random random = new System.Random();
+        int pick = random.Next(0, 3 + 1);
+        Card card = cards[pick];
+
+        if (card.name.Equals("SwordSlash") || card.name.Equals("MightySlash"))
+        {
+            Vector3 directionToHero = hero.transform.position - transform.position;
+            Vector3 normalizedDirection = directionToHero.normalized;
+            Vector3 teleportPosition = transform.position + normalizedDirection * 200;
+            transform.position = teleportPosition;
+        }
+        cards[pick].UseCard(transform.position, hero.transform.position, 1);
 
     }
     
@@ -189,9 +205,20 @@ public abstract class NPC : MonoBehaviour
         combatManager.ChangeTurn();
     }
 
+    public void GiveQuest(int id)
+    {
+        hero.GetComponent<Character>().quests.Add(new Quest(id));
+        hero.GetComponent<Character>().UpdateQuests();
+    }
+
     public void ChangeHealth(int delta)
     {
         health = Math.Min(maxHealth, health + delta);
+        if (delta < 0)
+        {
+            sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+            sfxManager.PlayHurt();
+        }
         if (health <= 0)
         {
             KillSelf();
@@ -207,7 +234,6 @@ public abstract class NPC : MonoBehaviour
 
     public void KillSelf()
     {
-        alive = false;
         Destroy(gameObject);
     }
 }

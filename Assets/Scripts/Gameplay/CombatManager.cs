@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CombatManager : MonoBehaviour
 {
@@ -17,14 +18,24 @@ public class CombatManager : MonoBehaviour
 
     private GameObject NPCs;
     private Character hero;
+    public int sceneX;
+    public int sceneY;
     public static CombatManager Instance { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
         fighting = false;
-        NPCs = GameObject.Find("NPCs");
+        sceneX = 0;
+        sceneY = 0;
+        NPCs = GameObject.Find("NPCs").transform.Find(sceneX + " - " + sceneY).gameObject;
         hero = GameObject.Find("Hero").GetComponent<Character>();
         Instance = this;
+
+    }
+
+    public void ReFindNPCs()
+    {
+        NPCs = GameObject.Find("NPCs").transform.Find(sceneX + " - " + sceneY).gameObject;
     }
     
     void Update()
@@ -55,6 +66,23 @@ public class CombatManager : MonoBehaviour
             hero.maxMana = 2;
             hero.mana = 2;
             hero.UpdateManaBar();
+            for (int i = 0; i < hero.quests.Count; i++)
+            {
+                switch (hero.quests[i].id)
+                {
+                    case 1:
+                        break;
+                    case 2:
+                        if (sceneX == 0 && sceneY == 0)
+                        {
+                            hero.quests.RemoveAt(i);
+                        }
+                        break;
+                    default:
+                        return;
+                }
+            }
+            hero.UpdateQuests();
             return;
         }
         
@@ -235,6 +263,11 @@ public class CombatManager : MonoBehaviour
     {
         hero.myTurn = false;
         hero.fighting = false;
+        hero.ChangeHealth(100);
+        foreach (Transform child in GameObject.Find("AreasOfEffect").transform)
+        {
+            Destroy(child);
+        }
     }
 
 

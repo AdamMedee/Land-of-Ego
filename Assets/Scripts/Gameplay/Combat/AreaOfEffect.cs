@@ -34,7 +34,8 @@ public abstract class AreaOfEffect : MonoBehaviour
         rb.isKinematic = true;
         bc = gameObject.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
-        npcs = GameObject.Find("NPCs");
+        CombatManager combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>();
+        npcs = GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject;
         hero = GameObject.Find("Hero");
     }
 
@@ -46,6 +47,7 @@ public abstract class AreaOfEffect : MonoBehaviour
     {
         Destroy(gameObject);
     }
+    
 }
 
 

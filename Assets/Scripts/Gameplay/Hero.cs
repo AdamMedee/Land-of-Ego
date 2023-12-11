@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,19 +32,21 @@ public class Character : MonoBehaviour
     public int mana;
     public int maxMana;
     public int rooted;
-
+    private SoundEffectsManager sfxManager;
     private int pickedCard;
-
+    public List<Quest> quests;
     private GameObject cardHand;
-
     private GameObject endTurn;
-    
+    private int sceneX;
+    private int sceneY;
     private List<Card> cards;
 
     private CombatManager combatManager;
     // Start is called before the first frame update
     void Start()
     {
+        
+        
         
         speed = 140;
         cards = new List<Card>()
@@ -58,6 +61,10 @@ public class Character : MonoBehaviour
             new ShootArrow(),
             new ShootArrow()
         };
+
+        quests = new List<Quest>();
+        //quests.Add(new Quest(1));
+        //quests.Add(new Quest(2));
         
         paused = false;
         myTurn = false;
@@ -70,6 +77,7 @@ public class Character : MonoBehaviour
         alive = true;
         UpdateManaBar();
         UpdateInventory();
+        UpdateQuests();
         rb = GetComponent<Rigidbody2D>();
         model = transform.Find("Model").gameObject;
         animator = model.GetComponent<Animator>();
@@ -124,10 +132,13 @@ public class Character : MonoBehaviour
                 {
                     endTurn.SetActive(true);
                     mana = maxMana;
-                    maxMana += 1;
+                    maxMana = Math.Min(maxMana + 1, 6);
                     UpdateManaBar();
                     isMoving = true;
-                    range.SetActive(true);
+                    if (rooted == 0)
+                    {
+                        range.SetActive(true);
+                    }
                     isAttacking = false;
                 }
 
@@ -206,6 +217,11 @@ public class Character : MonoBehaviour
     public void ChangeHealth(int delta)
     {
         health = Math.Min(maxHealth, health + delta);
+        if (delta < 0)
+        {
+            sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+            sfxManager.PlayHurt();
+        }
         if (health <= 0)
         {
             KillSelf();
@@ -301,7 +317,12 @@ public class Character : MonoBehaviour
 
     public void UseCard(Vector2 targ)
     {
-        cards[pickedCard-1].UseCard(transform.position, targ, 0);
+        if (cards[pickedCard - 1].UseCard(transform.position, targ, 0))
+        {
+            cards.Add(cards[pickedCard - 1]);
+            cards.RemoveAt(pickedCard - 1);
+            UpdateHandPics();
+        }
     }
     
     
@@ -324,5 +345,67 @@ public class Character : MonoBehaviour
                 currentCard.GetComponent<Image>().sprite = curCard.cardModel.sprite;
             }
         }
+    }
+
+    public void UpdateQuests()
+    {
+        GameObject questList = GameObject.Find("MainCanvas").transform.Find("Quests").Find("QuestList").gameObject;
+        for (int i = 1; i <= 5; i++)
+        {
+            GameObject currentSlot = questList.transform.Find("Quest" + i).gameObject;
+            if (i > quests.Count)
+            {
+                currentSlot.SetActive(false);
+            }
+            else
+            {
+                currentSlot.SetActive(true);
+                currentSlot.transform.Find("Title").gameObject.GetComponent<TextMeshProUGUI>().text = quests[i-1].title;
+                currentSlot.transform.Find("Description").gameObject.GetComponent<TextMeshProUGUI>().text = quests[i-1].description;
+            }
+        }
+    }
+
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        int x = combatManager.sceneX;
+        int y = combatManager.sceneY;
+        
+        string boundaryName = other.gameObject.transform.name;
+        if (boundaryName.Equals("NorthBoundary") && y < 2)
+        {
+            y += 1;
+            transform.position = new Vector3(transform.position.x, -400, transform.position.z);
+        }
+        else if (boundaryName.Equals("SouthBoundary") && y > 0)
+        {
+            y -= 1;
+            transform.position = new Vector3(transform.position.x, 400, transform.position.z);
+        }
+        else if (boundaryName.Equals("EastBoundary") && x < 2)
+        {
+            x += 1;
+            transform.position = new Vector3(-400, transform.position.y, transform.position.z);
+        }
+        else if (boundaryName.Equals("WestBoundary") && x > 0)
+        {
+            x -= 1;
+            transform.position = new Vector3(400, transform.position.y, transform.position.z);
+        }
+        else 
+        {
+            return;
+        }
+
+        TargetPoint = transform.position;
+        GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(false);
+        GameObject.Find("Environment").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(false);
+        combatManager.sceneX = x;
+        combatManager.sceneY = y;
+        GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(true);
+        GameObject.Find("Environment").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(true);
+        combatManager.ReFindNPCs();
+        
     }
 }

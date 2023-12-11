@@ -18,6 +18,8 @@ public abstract class Card {
     public Rarity rarity;
     protected GameObject models;
     public Image cardModel;
+    public SoundEffectsManager sfxManager;
+    public string name;
     
     // Constructor
     public Card() { }
@@ -32,6 +34,7 @@ public class ShootArrow : Card {
     public ShootArrow() : base() {
         rarity = Rarity.Common;
         cost = 1;
+        name = "ShootArrow";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("ShootArrow").gameObject.GetComponent<Image>();
     }
@@ -75,6 +78,9 @@ public class ShootArrow : Card {
         
         arrowInstance.CreateProjectile(charPos, target, team);
 
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlayArrow();
+
         return true;
     }
 }
@@ -84,6 +90,7 @@ public class RangersNet : Card {
     public RangersNet() : base() {
         rarity = Rarity.Common;
         cost = 2;
+        name = "RangersNet";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("RangersNet").gameObject.GetComponent<Image>();
     }
@@ -126,6 +133,9 @@ public class RangersNet : Card {
         arrowObject.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
         arrowInstance.CreateProjectile(charPos, target, team);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlayArrow();
 
         return true;
     }
@@ -140,6 +150,7 @@ public class MinorHeal : Card {
     public MinorHeal() : base() {
         rarity = Rarity.Common;
         cost = 2;
+        name = "MinorHeal";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("MinorHeal").gameObject.GetComponent<Image>();
     }
@@ -182,6 +193,9 @@ public class MinorHeal : Card {
         arrowObject.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
         arrowInstance.CreateProjectile(charPos, target, team);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlayHeal();
 
         return true;
     }
@@ -194,6 +208,7 @@ public class MajorHeal : Card {
     public MajorHeal() : base() {
         rarity = Rarity.Common;
         cost = 4;
+        name = "MajorHeal";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("MajorHeal").gameObject.GetComponent<Image>();
     }
@@ -236,6 +251,9 @@ public class MajorHeal : Card {
         arrowObject.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
         arrowInstance.CreateProjectile(charPos, target, team);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlayHeal();
 
         return true;
     }
@@ -247,6 +265,7 @@ public class SwordSlash : Card {
     public SwordSlash() : base() {
         rarity = Rarity.Common;
         cost = 1;
+        name = "SwordSlash";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("SwordSlash").gameObject.GetComponent<Image>();
     }
@@ -302,19 +321,32 @@ public class SwordSlash : Card {
 
         if (team == 0)
         {
-            GameObject NPCs = GameObject.Find("NPCs");
+            CombatManager combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>();
+            GameObject NPCs = GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject;
             foreach (Transform child in NPCs.transform)
             {
                 if (Vector2.SqrMagnitude(child.position - hero.transform.position) < 10000)
                 {
                     System.Random random = new System.Random();
-                    int damage = random.Next(12, 15 + 1) * -1;
+                    int damage = random.Next(3, 6 + 1) * -1;
                     child.gameObject.GetComponent<NPC>().ChangeHealth(damage);
                 }
             }
         }
+        else
+        {
+            if (Vector2.SqrMagnitude(charPos - target) < 10000)
+            {
+                System.Random random = new System.Random();
+                int damage = random.Next(8, 13 + 1) * -1;
+                hero.GetComponent<Character>().ChangeHealth(damage);
+            }
+        }
 
         Object.Destroy(arrowObject, 0.5f);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlaySlash();
         
         return true;
     }
@@ -327,6 +359,7 @@ public class MightySlash : Card {
     public MightySlash() : base() {
         rarity = Rarity.Common;
         cost = 3;
+        name = "MightySlash";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("MightySlash").gameObject.GetComponent<Image>();
     }
@@ -382,19 +415,32 @@ public class MightySlash : Card {
 
         if (team == 0)
         {
-            GameObject NPCs = GameObject.Find("NPCs");
+            CombatManager combatManager = GameObject.Find("CombatManager").GetComponent<CombatManager>();
+            GameObject NPCs = GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject;
             foreach (Transform child in NPCs.transform)
             {
                 if (Vector2.SqrMagnitude(child.position - hero.transform.position) < 10000)
                 {
                     System.Random random = new System.Random();
-                    int damage = random.Next(7, 12 + 1) * -1;
+                    int damage = random.Next(8, 13 + 1) * -1;
                     child.gameObject.GetComponent<NPC>().ChangeHealth(damage);
                 }
             }
         }
+        else
+        {
+            if (Vector2.SqrMagnitude(charPos - target) < 10000)
+            {
+                System.Random random = new System.Random();
+                int damage = random.Next(8, 13 + 1) * -1;
+                hero.GetComponent<Character>().ChangeHealth(damage);
+            }
+        }
 
         Object.Destroy(arrowObject, 0.5f);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlaySlash();
         
         return true;
     }
@@ -407,6 +453,7 @@ public class BlackHole : Card {
     public BlackHole() : base() {
         rarity = Rarity.Common;
         cost = 2;
+        name = "BlackHole";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("BlackHole").gameObject.GetComponent<Image>();
     }
@@ -449,6 +496,9 @@ public class BlackHole : Card {
         arrowObject.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
         arrowInstance.CreateArea(target, team);
+        
+        sfxManager = GameObject.Find("SoundEffectsManager").GetComponent<SoundEffectsManager>();
+        sfxManager.PlayMagic();
 
         return true;
     }

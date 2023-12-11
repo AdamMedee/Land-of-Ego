@@ -72,7 +72,7 @@ public class Arrow : Projectile
             a.ChangeHealth(damage);
             KillSelf();
         }
-        else if (other.gameObject.transform.parent.gameObject.name.Equals("NPCs") && team == 0)
+        else if (other.gameObject.transform.parent.parent.gameObject.name.Equals("NPCs") && team == 0)
         {
             NPC a = other.gameObject.GetComponent<NPC>();
             a.ChangeHealth(damage);
@@ -110,7 +110,7 @@ public class Net : Projectile
             a.rooted = 2;
             KillSelf();
         }
-        else if (other.gameObject.transform.parent.gameObject.name.Equals("NPCs") && team == 0)
+        else if (other.gameObject.transform.parent.parent.gameObject.name.Equals("NPCs") && team == 0)
         {
             NPC a = other.gameObject.GetComponent<NPC>();
             a.rooted = 2;
@@ -151,7 +151,7 @@ public class MinorHealShot : Projectile
             a.ChangeHealth(damage);
             KillSelf();
         }
-        else if (other.gameObject.transform.parent.gameObject.name.Equals("NPCs") && team == 1)
+        else if (other.gameObject.transform.parent.parent.gameObject.name.Equals("NPCs") && team == 1)
         {
             NPC a = other.gameObject.GetComponent<NPC>();
             a.ChangeHealth(damage);
@@ -192,7 +192,7 @@ public class MajorHealShot : Projectile
             a.ChangeHealth(damage);
             KillSelf();
         }
-        else if (other.gameObject.transform.parent.gameObject.name.Equals("NPCs") && team == 1)
+        else if (other.gameObject.transform.parent.parent.gameObject.name.Equals("NPCs") && team == 1)
         {
             NPC a = other.gameObject.GetComponent<NPC>();
             a.ChangeHealth(damage);

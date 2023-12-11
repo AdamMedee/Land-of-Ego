@@ -19,9 +19,7 @@ public class BobbyNPC : NPC
             new ShootArrow(),
             new ShootArrow(),
             new ShootArrow(),
-            new ShootArrow(),
-            new ShootArrow(),
-            new ShootArrow()
+            new BlackHole()
         };
         maxHealth = 40;
         health = maxHealth;
@@ -36,23 +34,17 @@ public class BobbyNPC : NPC
         switch (state)
         {
             case 0:
-                if (reputation > 40)
-                {
-                    DoDialogue("Howdy!");
-                    StartCoroutine(DelayedPrompt("abg", "dasd", "www"));
-                }
-                else
-                {
-                    DoDialogue("I hate you");
-                }
+                DoDialogue("Howdy!"); 
+                StartCoroutine(DelayedPrompt("Hey!", "You will die.", "*Leave*"));
                 break;
             
             case 1:
-                DoDialogue("If you wanna do the quest let me know!");
-                //PromptDialogue();
+                DoDialogue("I HATE these guys. Can you go kill them?");
+                StartCoroutine(DelayedPrompt("Sure!", "No.", "*Leave*"));
                 break;
             
             case 2:
+                DoDialogue("Thanks! Good luck!");
                 break;
             
             case 3:
@@ -75,32 +67,28 @@ public class BobbyNPC : NPC
         switch (state)
         {
             case 0:
-                if (reputation > 40)
+                if (answer == 1)
                 {
-                    if (answer == 1)
-                    {
-                        reputation = Math.Min(reputation + 10, 100);
-                        state = 1;
-                    }
-                    else if (answer == 2)
-                    {
-                        reputation = Math.Max(reputation - 10, 100);
-                        state = 1;
-                        StartCombat();
-                    }
-                    else
-                    {
-                        state = 2;
-                        //Code to add quest to quest list
-                    }
+                    state = 1;
+                    DetermineDialogue();
                 }
-                else
+                else if (answer == 2)
                 {
-
+                    StartCombat(); 
                 }
                 break;
             
             case 1:
+                if (answer == 1)
+                {
+                    state = 2;
+                    GiveQuest(1);
+                    DetermineDialogue();
+                }
+                else if (answer == 2)
+                {
+                    StartCombat(); 
+                }
                 break;
             
             case 2:
@@ -118,7 +106,6 @@ public class BobbyNPC : NPC
             default:
                 return;
         }
-        DetermineDialogue();
     }
 
     IEnumerator DelayedPrompt(string m1, string m2, string m3)
