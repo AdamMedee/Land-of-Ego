@@ -136,7 +136,7 @@ public class Mabel : NPC
 
     IEnumerator DelayedPrompt(string m1, string m2, string m3)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         PromptDialogue(m1, m2, m3);
     }
 }

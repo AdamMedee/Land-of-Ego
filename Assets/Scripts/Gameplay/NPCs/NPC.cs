@@ -115,7 +115,7 @@ public abstract class NPC : MonoBehaviour
             text.text = message;
             duplicatedObject.SetActive(true);
             //duplicatedObject.transform.position = new Vector3(0f, -320f, 0f);
-            Invoke("DeleteDialogue", 2f);
+            Invoke("DeleteDialogue", 3f);
         }
     }
 
@@ -204,7 +204,7 @@ public abstract class NPC : MonoBehaviour
     
     IEnumerator DelayedCombat()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         DoCombat();
         combatManager.ChangeTurn();
     }

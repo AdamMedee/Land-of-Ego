@@ -291,7 +291,7 @@ public class CombatManager : MonoBehaviour
         fighting = false;
         foreach (Transform child in GameObject.Find("AreasOfEffect").transform)
         {
-            Destroy(child);
+            Destroy(child.gameObject);
         }
     }
 
