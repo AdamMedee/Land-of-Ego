@@ -452,7 +452,7 @@ public class MightySlash : Card {
 public class BlackHole : Card {
     public BlackHole() : base() {
         rarity = Rarity.Common;
-        cost = 2;
+        cost = 6;
         name = "BlackHole";
         GameObject cardModels = GameObject.Find("CardModels");
         cardModel = cardModels.transform.Find("BlackHole").gameObject.GetComponent<Image>();
