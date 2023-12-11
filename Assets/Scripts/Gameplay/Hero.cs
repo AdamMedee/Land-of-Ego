@@ -71,7 +71,7 @@ public class Character : MonoBehaviour
         myTurn = false;
         inDialogue = false;
         maxHealth = 20;
-        health = 20;
+        health = 30;
         maxMana = 2;
         mana = 2;
         rooted = 0;

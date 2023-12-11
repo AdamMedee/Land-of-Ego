@@ -11,10 +11,10 @@ public class SallyNPC : NPC
         race = "Slime";
         cards = new List<Card>()
         {
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash()
+            new MajorHeal(),
+            new MajorHeal(),
+            new MajorHeal(),
+            new MajorHeal()
         };
         maxHealth = 10;
         health = maxHealth;

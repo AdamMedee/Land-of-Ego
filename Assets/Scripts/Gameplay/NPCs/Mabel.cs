@@ -11,10 +11,10 @@ public class Mabel : NPC
         race = "Human";
         cards = new List<Card>()
         {
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash()
+            new MinorHeal(),
+            new MinorHeal(),
+            new MinorHeal(),
+            new MinorHeal()
         };
         maxHealth = 4;
         health = maxHealth;
