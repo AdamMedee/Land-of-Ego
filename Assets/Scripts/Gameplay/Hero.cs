@@ -40,6 +40,7 @@ public class Character : MonoBehaviour
     private int sceneX;
     private int sceneY;
     private List<Card> cards;
+    public GameObject mapSpots;
 
     private CombatManager combatManager;
     // Start is called before the first frame update
@@ -48,12 +49,12 @@ public class Character : MonoBehaviour
         
         
         
-        speed = 140;
+        speed = 440;
         cards = new List<Card>()
         {
             new SwordSlash(),
+            new MightySlash(),
             new MinorHeal(),
-            new RangersNet(),
             new MajorHeal(),
             new BlackHole(),
             new ShootArrow(),
@@ -401,10 +402,12 @@ public class Character : MonoBehaviour
         TargetPoint = transform.position;
         GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(false);
         GameObject.Find("Environment").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(false);
+        mapSpots.transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(false);
         combatManager.sceneX = x;
         combatManager.sceneY = y;
         GameObject.Find("NPCs").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(true);
         GameObject.Find("Environment").transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(true);
+        mapSpots.transform.Find(combatManager.sceneX + " - " + combatManager.sceneY).gameObject.SetActive(true);
         combatManager.ReFindNPCs();
         
     }

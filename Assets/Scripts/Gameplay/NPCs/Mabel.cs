@@ -45,8 +45,17 @@ public class Mabel : NPC
             
             case 3:
                 DoDialogue("Ugh, fine. *She leaves to where Todd is*");
-                //Finish quest 2
-                Destroy(gameObject);
+                GameObject.Find("NPCs").transform.Find("1 - 0").Find("Todd").gameObject.GetComponent<Todd>().state = 6;
+                for (int i = 0; i < GameObject.Find("Hero").GetComponent<Character>().quests.Count; i++)
+                {
+                    print(GameObject.Find("Hero").GetComponent<Character>().quests[i].id);
+                    if (GameObject.Find("Hero").GetComponent<Character>().quests[i].id == 2)
+                    {
+                        GameObject.Find("Hero").GetComponent<Character>().quests.RemoveAt(i);
+                    }
+                }
+                GameObject.Find("Hero").GetComponent<Character>().UpdateQuests();
+                gameObject.transform.position = new Vector3(10000, 10000, 0);
                 break;
 
 

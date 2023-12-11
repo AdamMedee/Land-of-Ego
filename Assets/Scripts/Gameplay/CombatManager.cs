@@ -20,6 +20,10 @@ public class CombatManager : MonoBehaviour
     private Character hero;
     public int sceneX;
     public int sceneY;
+    public NPC sally;
+    public NPC mut;
+    public NPC stul;
+    public NPC commander;
     public static CombatManager Instance { get; private set; }
     // Start is called before the first frame update
     void Start()
@@ -71,11 +75,31 @@ public class CombatManager : MonoBehaviour
                 switch (hero.quests[i].id)
                 {
                     case 1:
+                        if (sceneX == 1 && sceneY == 2)
+                        {
+                            hero.quests.RemoveAt(i);
+                            sally.state = 9;
+                        }
                         break;
-                    case 2:
+                    case 4:
+                        if (sceneX == 0 && sceneY == 1)
+                        {
+                            hero.quests.RemoveAt(i);
+                            mut.state = 3;
+                        }
+                        break;
+                    case 5:
+                        if (sceneX == 2 && sceneY == 1)
+                        {
+                            hero.quests.RemoveAt(i);
+                            stul.state = 3;
+                        }
+                        break;
+                    case 8:
                         if (sceneX == 0 && sceneY == 0)
                         {
                             hero.quests.RemoveAt(i);
+                            commander.state = 3;
                         }
                         break;
                     default:
@@ -264,6 +288,7 @@ public class CombatManager : MonoBehaviour
         hero.myTurn = false;
         hero.fighting = false;
         hero.ChangeHealth(100);
+        fighting = false;
         foreach (Transform child in GameObject.Find("AreasOfEffect").transform)
         {
             Destroy(child);

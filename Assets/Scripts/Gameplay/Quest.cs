@@ -15,16 +15,29 @@ public class Quest
         switch (questID)
         {
             case 1:
-                title = "Speak to Searcy";
-                description = "Go and speak to Sallys twin sister, Searcy";
+                title = "World Peace";
+                description = "Find a way to bring an end to the war before things get out of hand.";
                 id = 1;
                 break;
             case 2:
-                title = "Kill the mercenaries";
-                description = "Kill all the mercsaa sdhh dsufhsudfhui udhfuidhfui sdufhuifhsd sdufhsdf sdufhsd sudfhuidhfiusd hsfduhufh sdufhdsuhfs hsduifhsdhuf sdufhishf sdufhsui dsufh";
+                title = "Bring Mabel Back";
+                description = "Find Mabel and bring her back to her older brother.";
                 id = 2;
                 break;
-            case 3:
+            case 4:
+                title = "Defend Mutus";
+                description = "Kill Stult, bringing an end to the war. Stop the carnage before it begins by only ending a single life, just one power drunk aggressor.";
+                id = 4;
+                break;
+            case 5:
+                title = "Avenge Stultum";
+                description = "Kill Mut, winning the war for Stultum. Avenge King Stul by ending the thieving fool.";
+                id = 5;
+                break;
+            case 8:
+                title = "End Sally";
+                description = "End Sally's life. This will bring an end to the positive force protecting the forest from eternal darkness, and the Dark Commander will rule for all eternity.";
+                id = 8;
                 break;
             default:
                 return;

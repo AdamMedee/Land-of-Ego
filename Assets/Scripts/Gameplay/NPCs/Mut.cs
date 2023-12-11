@@ -4,23 +4,23 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Todd : NPC
+public class Mut : NPC
 {
     public override void Init()
     {
         race = "Human";
         cards = new List<Card>()
         {
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash(),
-            new SwordSlash()
+            new MightySlash(),
+            new MightySlash(),
+            new MightySlash(),
+            new MightySlash()
         };
-        maxHealth = 10;
+        maxHealth = 30;
         health = maxHealth;
         maxMana = 2;
         mana = maxMana;
-        Debug.Log("Todd NPC initialized.");
+        Debug.Log("Mut NPC initialized.");
     }
 
     public override void DetermineDialogue()
@@ -29,40 +29,26 @@ public class Todd : NPC
         switch (state)
         {
             case 0:
-                DoDialogue("Oh finally, someone who could possible help me. Please, I really need your assistance. I'm Todd. Do you have the time to spare?");
-                StartCoroutine(DelayedPrompt("Of course, what do you need?", "I don't.", "*Attack*"));
+                DoDialogue("I am King Mut. What matters do you have here with me?");
+                StartCoroutine(DelayedPrompt("I'm hear to help your cause.", "Nothing. *Leave*", "Today is the day you die. *Attack*"));
                 break;
             
             case 1:
-                DoDialogue("It's my younger sister Mabel, she ran off away from the group and I can't find her. Could you find her and tell her where we are?");
-                StartCoroutine(DelayedPrompt("Sure, I'll look around.", "You lost your sister? This is on you.", "*Leave*"));
+                DoDialogue("If you wish to help my cause, go West. Kill that treacherous fool, and bring me his head.");
+                GiveQuest(4);
+                StartCoroutine(DelayedPrompt("I am at your service.", "It's the other way around. I'm taking your head. *Attack*", "Actually, nevermind. *Leave*"));
                 break;
 
             case 2:
-                DoDialogue("Hey, change your mind?");
-                StartCoroutine(DelayedPrompt("Yeah, what do you need?", "No.", "*Attack*"));
+                DoDialogue("What's taking so long?");
+                StartCoroutine(DelayedPrompt("I'll get back to it.", "Just trying to be careful about it.", "*Attack*"));
                 break;
             
             case 3:
-                DoDialogue("Oh thank you so much! Good luck.");
-                state = 5;
-                GiveQuest(2);
+                DoDialogue("You have killed the traitor. Thank you for bringing us glory.");
                 break;
-            
-            case 4:
-                DoDialogue("I know, I'm a terrible brother. Well, good luck on your travels.");
-                state = 2;
-                break;
-            
-            case 5:
-                DoDialogue("Hey, hope it's going well. Find her soon, will you?");
-                break;
-            
-            case 6:
-                DoDialogue("Thank you so much for finding her! This means a lot.");
-                break;
-            
-            
+
+
             default:
                 return;
         }
@@ -82,7 +68,7 @@ public class Todd : NPC
                         break;
                     
                     case 2:
-                        state = 2;
+                        state = 1;
                         break;
                     
                     case 3:
@@ -99,15 +85,12 @@ public class Todd : NPC
                 switch (answer)
                 {
                     case 1:
-                        state = 3;
-                        DetermineDialogue();
                         break;
                     
                     case 2:
-                        state = 4;
-                        DetermineDialogue();
+                        StartCombat();
                         break;
-                    
+
                     default:
                         return;
                 }
@@ -118,8 +101,6 @@ public class Todd : NPC
                 switch (answer)
                 {
                     case 1:
-                        state = 1;
-                        DetermineDialogue();
                         break;
                     
                     case 2:

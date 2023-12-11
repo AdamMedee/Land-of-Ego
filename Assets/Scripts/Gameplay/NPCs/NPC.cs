@@ -1,17 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.UI;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 
 // Common implementation for NPC behaviors
 public abstract class NPC : MonoBehaviour
 {
     protected int reputation = 50; // Is out of 100, 0 they hate you 100 they love you
-    protected int state = 0;
+    public int state = 0;
     private GameObject hero = null;
     protected string race = "None";
     protected static GameObject dialogueBoxTemplate;
@@ -191,6 +194,7 @@ public abstract class NPC : MonoBehaviour
         {
             Vector3 directionToHero = hero.transform.position - transform.position;
             Vector3 normalizedDirection = directionToHero.normalized;
+            float distance = Math.Min(200, (hero.transform.position - transform.position).magnitude - 5f);
             Vector3 teleportPosition = transform.position + normalizedDirection * 200;
             transform.position = teleportPosition;
         }

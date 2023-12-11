@@ -55,6 +55,7 @@
       <Path>Logs</Path>
       <Path>Temp</Path>
       <Path>UserSettings</Path>
+      <Path>build1</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>

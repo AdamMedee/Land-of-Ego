@@ -11,10 +11,10 @@ public class SallyNPC : NPC
         race = "Slime";
         cards = new List<Card>()
         {
-            new MinorHeal(),
             new SwordSlash(),
             new SwordSlash(),
-            new MinorHeal()
+            new SwordSlash(),
+            new SwordSlash()
         };
         maxHealth = 10;
         health = maxHealth;
@@ -70,6 +70,10 @@ public class SallyNPC : NPC
             case 8:
                 DoDialogue("Hey! I hope you're doing well on your quest.");
                 StartCoroutine(DelayedPrompt("It's going alright.", "*Attack*", "*Leave*"));
+                break;
+            
+            case 9:
+                DoDialogue("You did it! The Land of Ego is saved.");
                 break;
             
             default:
