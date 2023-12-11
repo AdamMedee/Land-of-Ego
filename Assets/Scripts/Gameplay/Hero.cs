@@ -49,7 +49,7 @@ public class Character : MonoBehaviour
         
         
         
-        speed = 440;
+        speed = 140;
         cards = new List<Card>()
         {
             new SwordSlash(),
